@@ -3,11 +3,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>demo</title>
+    <title>ndarray-stl viewer</title>
+    <style>
+        body {
+            font-family: Monospace;
+            margin: 0px;
+            overflow: hidden;
+        }
+        .container { margin: 20px; }
+        .buttons { margin-bottom: 10px; }
+    </style>
 </head>
 <body>
-  <div id="viewer" style="float:left;width:600px;height:600px"></div>
-  <a class="download" href="#" style="display:none;">Download STL</a>
+  
+  <div class="container">
+    <p>Design your own models in browser at <a href="http://voxelbuilder.com/">Voxel Builder</a> or <a href="http://derekr.github.io/voxel-painter-admin/" target="_blank">view the library</a></p>
+    
+    <div class="loading">Loading...</div>
+    
+    <div class="buttons" style="display: none;">
+      <input type="button" value="Download voxel STL" class="voxel" />
+      <input type="button" value="Download smooth STL" class="smooth" />
+      <input type="button" value="View voxel" class="view-voxel" />
+      <input type="button" value="View smooth" class="view-smooth" />
+    </div>
+    
+    <div id="object" style="float:left;width:300px;height:300px"></div>
+    
+  </div>
   <script src="js/Three.js"></script>
   <script src="js/plane.js"></script>
   <script src="js/thingiview.js"></script>
