@@ -4,7 +4,7 @@
   "description": "turn voxels into 3D printable stl files",
   "main": "index.js",
   "scripts": {
-    "start": "beefy demo.js"
+    "start": "beefy demo.js:bundle.js"
   },
   "author": "max ogden",
   "license": "BSD",

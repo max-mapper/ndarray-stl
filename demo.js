@@ -50,7 +50,7 @@ function download(stl) {
 }
 
 function display(stl) {
-  thingiurlbase = "/js"
+  thingiurlbase = "js"
   window.thingiview = new Thingiview("viewer")
   thingiview.setObjectColor('#C0D8F0')
   thingiview.initScene()
