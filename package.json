@@ -1,18 +1,23 @@
 {
   "name": "ndarray-stl",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "beefy demo.js"
   },
   "author": "",
   "license": "BSD",
   "dependencies": {
     "isosurface": "~0.1.0",
-    "ndarray-fill": "~0.1.0",
-    "ndarray": "~1.0.6",
     "ao-mesher": "~0.2.9",
-    "ndarray-ops": "~1.1.1"
+    "normals": "~0.1.0"
+  },
+  "devDependencies": {
+    "beefy": "~0.4.1",
+    "browserify": "~2.26.0",
+    "voxel-critter": "~0.1.1",
+    "ndarray-fill": "~0.1.0",
+    "ndarray": "~1.0.6"
   }
 }
