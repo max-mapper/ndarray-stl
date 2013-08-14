@@ -1,6 +1,6 @@
 # ndarray-stl
 
-Converts an [ndarray](https://github.com/mikolalysenko/ndarray) of voxels into an ascii [STL](https://en.wikipedia.org/wiki/STL_(file_format)) file suitable for 3D printing or other 3D applications.
+Converts an [ndarray](https://github.com/mikolalysenko/ndarray) of voxels into an ascii [STL](http://orion.math.iastate.edu/burkardt/data/stl/stl.html) file suitable for 3D printing or other 3D applications.
 
 You can also smooth the voxel volumes using various [isosurface smoothing algorithms](http://0fps.wordpress.com/2012/07/12/smooth-voxel-terrain-part-2/) such as marching cubes or surface nets.
 
@@ -18,7 +18,7 @@ This will work with any voxel data, but I built it to work with another app I ma
 
 ![mario](img/mario-builder.png)
 
-When you export your creation from Voxel Builder you get a PNG file with the voxel data magically encoded inside. That means you can upload the PNG photo of your creation into any app that knows how to extract it and you can then fully view edit your 3D in that app.
+When you export your creation from Voxel Builder you get a PNG file with the voxel data magically encoded inside. That means you can upload the PNG photo of your creation into any app that knows how to extract it (such as the WebGl powered [voxel-critter](http://shama.github.io/voxel-critter/)) and you can then fully view edit your 3D in that app.
 
 For example, this image has encoded voxel data hidden inside:
 
@@ -29,6 +29,11 @@ In the [ndarray-stl demo](http://maxogden.github.io/ndarray-stl/?png=http://i.im
 
 ![mario-makerware](img/mario-makerware.png)
 
+At this point in time there are over [400 creations](http://derekr.github.io/voxel-painter-admin/) that have been made with Voxel Builder. Any of them can be loaded into the ndarray-stl demo. Here are some good ones:
+
+- [elephant](http://maxogden.github.io/ndarray-stl/?png=http://i.imgur.com/XawptQv.png)
+- [outrigger boat](http://maxogden.github.io/ndarray-stl/?png=http://i.imgur.com/Gv5Q3UP.png)
+- [race car](http://maxogden.github.io/ndarray-stl/?png=http://i.imgur.com/ZcSVaqy.png)
 
 ## api
 
