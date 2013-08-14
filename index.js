@@ -39,8 +39,10 @@ function smoothSTL(voxels) {
     return voxels.get(x, y, z) - 1
   })
   
-  var faces = []
+  net.normals = normals.faceNormals(net.cells, net.positions)
   
+  stl = []
+  stl.push("solid pixel")
   for (var i = 0; i < net.cells.length; ++i) {
     var cell = net.cells[i]
     var face = [
@@ -48,60 +50,23 @@ function smoothSTL(voxels) {
       net.positions[cell[1]],
       net.positions[cell[2]]
     ]
-    faces.push(face)
-  }
-  
-  stl = []
-  stl.push("solid pixel")
-  faces.map(function(face) {
-    if (!face) return
-    var normal = surfaceNormal(face)
-    // normal = normal.map(function(n) { return n * - 1 })
+    var normal = net.normals[i]
     stl.push("facet normal " + stringifyVector(normal))
     stl.push("outer loop")
-    stl.push(stringifyVertex(face[0]))
-    stl.push(stringifyVertex(face[1]))
     stl.push(stringifyVertex(face[2]))
+    stl.push(stringifyVertex(face[1]))
+    stl.push(stringifyVertex(face[0]))
     stl.push("endloop")
     stl.push("endfacet")
-  })
+  }
   stl.push("endsolid")
   return stl.join('\n')
 }
 
-function stringifyVector(vec){
-  return ""+vec[0]+" "+vec[1]+" "+vec[2];
+function stringifyVector(vec) {
+  return "" + vec[0] + " " + -vec[2] + " " + vec[1]
 }
 
-function stringifyVertex(vec){
-  return "vertex "+stringifyVector(vec);
-}
-
-// normal methods
-
-function crossprod(a, b) {
-  return [
-    (a[1] * b[2]) - (a[2] * b[1]),
-    (a[2] * b[0]) - (a[0] * b[2]),
-    (a[0] * b[1]) - (a[1] * b[0])
-  ]
-}
- 
-function subvec(a, b) {
-  return [
-    b[0] - a[0],
-    b[1] - a[1],
-    b[2] - a[2],
-  ]
-}
- 
-function surfaceNormal(verts) {
-  return normalize(crossprod(subvec(verts[2], verts[1]), subvec(verts[0], verts[1])))
-}
- 
-function normalize(v) {
-  var len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2])
-  if (len === 0) return [0, 0, 0]
-  var i = 1 / len
-  return [v[0] * i, v[1] * i, v[2] * i]
+function stringifyVertex(vec) {
+  return "vertex " + stringifyVector(vec)
 }

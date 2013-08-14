@@ -1,14 +1,19 @@
 var critter = require('voxel-critter')
 var ndarray = require('ndarray')
+var fill = require("ndarray-fill")
+var url = require('url')
 var toSTL = require('./')
 
 var sword = "http://i.imgur.com/pwXXF1Q.png"
 var mario = "http://i.imgur.com/ccBkMVY.png"
 var car = "http://i.imgur.com/ZcSVaqy.png"
 
-var fill = require("ndarray-fill")
+var png = mario
 
-getProxyImage(mario, function(image) {
+var parsed = url.parse(window.location.href, true)
+if (parsed.query && parsed.query.png) png = parsed.query.png
+
+getProxyImage(png, function(image) {
   var hash = critter.load(image)
   var data = critter.convertToVoxels(hash)
   var l = data.bounds[0]
@@ -27,9 +32,33 @@ getProxyImage(mario, function(image) {
   fill(interior, generateVoxels)
   var smooth = true
   var stl = toSTL(voxels, smooth)
-  var blob = new Blob([stl], { type: 'text/plain' })
-  saveAs(blob, smooth ? 'smooth.stl' : 'object.stl')
+  document.body.appendChild(image)
+  image.style.width = '400px'
+  display(stl)
+  var downloadButton = document.querySelector('.download')
+  downloadButton.style.display = "inherit"
+  downloadButton.addEventListener('click', function(e) {
+    download(stl)
+    e.preventDefault()
+    return false
+  })
 })
+
+function download(stl) {
+  var blob = new Blob([stl], { type: 'text/plain' })
+  saveAs(blob, 'voxel-object.stl')
+}
+
+function display(stl) {
+  thingiurlbase = "/js"
+  window.thingiview = new Thingiview("viewer")
+  thingiview.setObjectColor('#C0D8F0')
+  thingiview.initScene()
+  thingiview.loadSTLString(stl)
+  setTimeout(function() {
+    thingiview.setRotation(false)
+  }, 1000)
+}
 
 function getProxyImage(imgURL, cb) {
   var proxyURL = 'http://maxcors.jit.su/' + imgURL // until imgur gets CORS on GETs

@@ -1,12 +1,12 @@
 {
   "name": "ndarray-stl",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "turn voxels into 3D printable stl files",
   "main": "index.js",
   "scripts": {
     "start": "beefy demo.js"
   },
-  "author": "",
+  "author": "max ogden",
   "license": "BSD",
   "dependencies": {
     "isosurface": "~0.1.0",
