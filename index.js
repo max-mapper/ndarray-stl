@@ -1,4 +1,3 @@
-
 module.exports = generateSTL
 
 function generateSTL(m) {
@@ -6,24 +5,25 @@ function generateSTL(m) {
   // 0  1  2   3   4   5   6    7
   // x, y, z, ao, nx, ny, nz, tid
 
-  stl = "solid pixel\n"
+  stl = []
+  stl.push("solid pixel")
   for (var i = 0; i < m.length; i += 24) {
     var face = [
       [m[i + 0], m[i + 1], m[i + 2]],
       [m[i + 8], m[i + 9], m[i + 10]],
       [m[i + 16], m[i + 17], m[i + 18]]
     ]
-    stl += ("facet normal "+stringifyVector( surfaceNormal(face) )+" \n")
-    stl += ("outer loop \n")
-    stl += stringifyVertex(face[0])
-    stl += stringifyVertex(face[1])
-    stl += stringifyVertex(face[2])
-    stl += ("endloop \n")
-    stl += ("endfacet \n")
+    var normal = [m[i + 4], m[i + 5], m[i + 6]]
+    stl.push("facet normal "+stringifyVector( normal ))
+    stl.push("outer loop")
+    stl.push(stringifyVertex(face[0]))
+    stl.push(stringifyVertex(face[1]))
+    stl.push(stringifyVertex(face[2]))
+    stl.push("endloop")
+    stl.push("endfacet")
   }
-  stl += ("endsolid")
-
-  return stl
+  stl.push("endsolid")
+  return stl.join('\n')
 }
 
 function crossprod(a, b) {
@@ -58,5 +58,5 @@ function stringifyVector(vec){
 }
 
 function stringifyVertex(vec){
-  return "vertex "+stringifyVector(vec)+" \n";
+  return "vertex "+stringifyVector(vec);
 }
