@@ -18,7 +18,7 @@ getProxyImage(png, function(image) {
   var l = data.bounds[0]
   var h = data.bounds[1]
   var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
-  var len = (d[0] + 4) * (d[1] + 4) * (d[2] + 4)
+  var len = (d[0] + 8) * (d[1] + 8) * (d[2] + 8)
   var voxels = ndarray(new Int32Array(len), [d[0] + 4, d[1] + 4, d[2] + 4])
   
   function generateVoxels(x, y, z) {
@@ -27,7 +27,7 @@ getProxyImage(png, function(image) {
     return val || 0
   }
   
-  var interior = voxels.lo(2, 2, 2).hi(d[0], d[1], d[2])
+  var interior = voxels.lo(1, 1, 1).hi(d[0] + 4, d[1] + 4, d[2] + 4)
   fill(interior, generateVoxels)
   var stl = toSTL(voxels)
   var smooth = toSTL(voxels, true)
