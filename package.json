@@ -19,5 +19,12 @@
     "voxel-critter": "~0.1.1",
     "ndarray-fill": "~0.1.0",
     "ndarray": "~1.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/maxogden/ndarray-stl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maxogden/ndarray-stl/issues"
   }
 }
