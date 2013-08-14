@@ -13,7 +13,7 @@ function generateSTL(m) {
       [m[i + 8], m[i + 9], m[i + 10]],
       [m[i + 16], m[i + 17], m[i + 18]]
     ]
-    var normal = [m[i + 4], m[i + 5], m[i + 6]]
+    var normal = [128 - m[i + 4], 128 - m[i + 5], 128 - m[i + 6]]
     stl.push("facet normal "+stringifyVector( normal ))
     stl.push("outer loop")
     stl.push(stringifyVertex(face[0]))
