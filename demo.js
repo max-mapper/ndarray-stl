@@ -23,13 +23,33 @@ getProxyImage(png, function(image) {
   function generateVoxels(x, y, z) {
     var offset = [x + l[0], y + l[1], z + l[2]]
     var val = data.voxelData[offset.join('|')]
+    if (val === 0) val = 1 // green voxels are stored as zeroes by voxelbuilder
     return val || 0
   }
   
   var interior = voxels.lo(1, 1, 1).hi(d[0] + 4, d[1] + 4, d[2] + 4)
   fill(interior, generateVoxels)
-  var stl = toSTL(voxels)
-  var smooth = toSTL(voxels, true)
+  
+  var normalOptions = {
+    faceFormat: function(f) {
+      return f.map(function(v) {
+        return [v[0], -v[2], v[1]]
+      })
+    }
+  }
+  
+  var smoothOptions = {
+    faceFormat: function(f) {
+      return [f[2], f[1], f[0]].map(function(v) {
+        return [v[0], -v[2], v[1]]
+      })
+    },
+    smooth: true,
+    method: 'surfaceNets'
+  }
+  
+  var stl = toSTL(voxels, normalOptions)
+  var smooth = toSTL(voxels, smoothOptions)
   document.body.appendChild(image)
   image.style.width = '400px'
   display(stl)

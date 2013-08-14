@@ -2,19 +2,23 @@ var isosurface = require('isosurface')
 var aomesher = require('ao-mesher')
 var normals = require('normals')
 
-module.exports = function(voxels, smooth) {
-  if (smooth) return smoothSTL(voxels)
-  else return normalSTL(voxels)
+module.exports = function(voxels, options) {
+  if (!options) options = {}
+  if (options.smooth) return smoothSTL(voxels, options)
+  else return normalSTL(voxels, options)
 }
 
-function normalSTL(voxels) {
+module.exports.buildSTL = buildSTL
+
+function normalSTL(voxels, options) {
   var m = aomesher(voxels)
+  
   // ao-mesher sequence
   // 0  1  2   3   4   5   6    7
   // x, y, z, ao, nx, ny, nz, tid
 
-  stl = []
-  stl.push("solid pixel")
+  var faces = []
+  var normals = []
   for (var i = 0; i < m.length; i += 24) {
     var face = [
       [m[i + 0], m[i + 1], m[i + 2]],
@@ -22,27 +26,17 @@ function normalSTL(voxels) {
       [m[i + 16], m[i + 17], m[i + 18]]
     ]
     var normal = [128 - m[i + 4], 128 - m[i + 5], 128 - m[i + 6]]
-    stl.push("facet normal "+stringifyVector( normal ))
-    stl.push("outer loop")
-    stl.push(stringifyVertex(face[0]))
-    stl.push(stringifyVertex(face[1]))
-    stl.push(stringifyVertex(face[2]))
-    stl.push("endloop")
-    stl.push("endfacet")
+    faces.push(face)
+    normals.push(normal)
   }
-  stl.push("endsolid")
-  return stl.join('\n')
+  return buildSTL(faces, normals, options)
 }
 
-function smoothSTL(voxels) {
-  var net = isosurface.surfaceNets(voxels.shape, function(x, y, z) {
+function smoothSTL(voxels, options) {
+  var net = isosurface[options.method || 'surfaceNets'](voxels.shape, function(x, y, z) {
     return voxels.get(x, y, z) - 1
   })
-  
-  net.normals = normals.faceNormals(net.cells, net.positions)
-  
-  stl = []
-  stl.push("solid pixel")
+  var faces = []
   for (var i = 0; i < net.cells.length; ++i) {
     var cell = net.cells[i]
     var face = [
@@ -50,12 +44,22 @@ function smoothSTL(voxels) {
       net.positions[cell[1]],
       net.positions[cell[2]]
     ]
-    var normal = net.normals[i]
-    stl.push("facet normal " + stringifyVector(normal))
+    faces.push(face)
+  }
+  var faceNormals = normals.faceNormals(net.cells, net.positions)
+  return buildSTL(faces, faceNormals, options)
+}
+
+function buildSTL(faces, normals, options) {
+  var stl = []
+  stl.push("solid snake")
+  for (var i = 0; i < faces.length; ++i) {
+    var face = faces[i]
+    var normal = normals[i]
+    stl.push("facet normal " + normal.join(' '))
     stl.push("outer loop")
-    stl.push(stringifyVertex(face[2]))
-    stl.push(stringifyVertex(face[1]))
-    stl.push(stringifyVertex(face[0]))
+    if (options.faceFormat) face = options.faceFormat(face)
+    stl = stl.concat(face.map(stringifyVertex))
     stl.push("endloop")
     stl.push("endfacet")
   }
@@ -63,10 +67,6 @@ function smoothSTL(voxels) {
   return stl.join('\n')
 }
 
-function stringifyVector(vec) {
-  return "" + vec[0] + " " + -vec[2] + " " + vec[1]
-}
-
 function stringifyVertex(vec) {
-  return "vertex " + stringifyVector(vec)
+  return "vertex " + vec.join(' ')
 }
