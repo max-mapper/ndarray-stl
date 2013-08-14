@@ -24,7 +24,7 @@ For example, this image has encoded voxel data hidden inside:
 
 ![mario-encoded](http://i.imgur.com/ccBkMVY.png)
 
-In the [ndarray-stl] demo I load the mario image (or any PNG url, you can specify one in the address bar), read the voxel data from the PNG and then generate an STL file from the voxels using ndarray-stl. You can also generate a smoothed voxel model. STL files can then be loaded into programs like MakerWare and 3D printed!
+In the [ndarray-stl demo](http://maxogden.github.io/ndarray-stl/?png=http://i.imgur.com/ccBkMVY.png) I load the mario image (or any PNG url, you can specify one in the address bar), read the voxel data from the PNG and then generate an STL file from the voxels using ndarray-stl. You can also generate a smoothed voxel model. STL files can then be loaded into programs like MakerWare and 3D printed!
 
 
 ![mario-makerware](img/mario-makerware.png)
