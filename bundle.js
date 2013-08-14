@@ -5,14 +5,12 @@ var fill = require("ndarray-fill")
 var url = require('url')
 var toSTL = require('./')
 
-var sword = "http://i.imgur.com/pwXXF1Q.png"
 var mario = "http://i.imgur.com/ccBkMVY.png"
-var car = "http://i.imgur.com/ZcSVaqy.png"
 
-var png = mario
-
+var png
 var parsed = url.parse(window.location.href, true)
 if (parsed.query && parsed.query.png) png = parsed.query.png
+else window.location.href = "?png=" + mario
 
 getProxyImage(png, function(image) {
   var hash = critter.load(image)
@@ -31,15 +29,44 @@ getProxyImage(png, function(image) {
   
   var interior = voxels.lo(2, 2, 2).hi(d[0], d[1], d[2])
   fill(interior, generateVoxels)
-  var smooth = true
-  var stl = toSTL(voxels, smooth)
+  var stl = toSTL(voxels)
+  var smooth = toSTL(voxels, true)
   document.body.appendChild(image)
   image.style.width = '400px'
   display(stl)
-  var downloadButton = document.querySelector('.download')
-  downloadButton.style.display = "inherit"
-  downloadButton.addEventListener('click', function(e) {
+  
+  var buttons = document.querySelector('.buttons')
+  var loading = document.querySelector('.loading')
+  var voxelButton = document.querySelector('.voxel')
+  var smoothButton = document.querySelector('.smooth')
+  var viewVoxel = document.querySelector('.view-voxel')
+  var viewSmooth = document.querySelector('.view-smooth')
+  buttons.style.display = "inherit"
+  loading.style.display = "none"
+  
+  voxelButton.addEventListener('click', function(e) {
     download(stl)
+    e.preventDefault()
+    return false
+  })
+  smoothButton.addEventListener('click', function(e) {
+    download(smooth)
+    e.preventDefault()
+    return false
+  })
+  viewVoxel.addEventListener('click', function(e) {
+    thingiview.loadSTLString(stl)
+    setTimeout(function() {
+      thingiview.setRotation(false)
+    }, 1000)
+    e.preventDefault()
+    return false
+  })
+  viewSmooth.addEventListener('click', function(e) {
+    thingiview.loadSTLString(smooth)
+    setTimeout(function() {
+      thingiview.setRotation(false)
+    }, 1000)
     e.preventDefault()
     return false
   })
@@ -52,8 +79,7 @@ function download(stl) {
 
 function display(stl) {
   thingiurlbase = "js"
-  console.log(thingiurlbase)
-  window.thingiview = new Thingiview("viewer")
+  window.thingiview = new Thingiview('object')
   thingiview.setObjectColor('#C0D8F0')
   thingiview.initScene()
   thingiview.loadSTLString(stl)
