@@ -29,6 +29,8 @@ In the [ndarray-stl demo](http://maxogden.github.io/ndarray-stl/?png=http://i.im
 
 ![mario-makerware](img/mario-makerware.png)
 
+The above shows three STL files loaded into MakerWare: unsmoothed, smoothed with [surface nets](http://www.merl.com/papers/docs/TR99-24.pdf) and smoothed with [marching cubes](https://en.wikipedia.org/wiki/Marching_cubes).
+
 At this point in time there are over [400 creations](http://derekr.github.io/voxel-painter-admin/) that have been made with Voxel Builder. Any of them can be loaded into the ndarray-stl demo. Here are some good ones:
 
 - [elephant](http://maxogden.github.io/ndarray-stl/?png=http://i.imgur.com/XawptQv.png)
@@ -39,11 +41,11 @@ At this point in time there are over [400 creations](http://derekr.github.io/vox
 
 see `demo.js` for example usage
 
-### var stlify = require('ndarray-stl')
+### var stl = require('ndarray-stl')
 
 require the module
 
-### stlify(voxels, options)
+### stl(voxels, options)
 
 `voxels` has to be a 3d ndarray. returns an ascii stl string.
 
