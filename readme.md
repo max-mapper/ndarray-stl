@@ -30,7 +30,7 @@ In the [ndarray-stl demo](http://maxogden.github.io/ndarray-stl/?png=http://i.im
 
 The above shows three STL files loaded into MakerWare: unsmoothed, smoothed with [surface nets](http://www.merl.com/papers/docs/TR99-24.pdf) and smoothed with [marching cubes](https://en.wikipedia.org/wiki/Marching_cubes).
 
-![marios](img/marios-irl.png)
+[![marios](img/marios-irl.png)](#printed-marios)
 
 Here are the 3 variations of Mario printed out by [@vladikoff](https://github.com/vladikoff) at the Mozilla San Francisco office. You can view more photos from his print [here](https://plus.google.com/106106671604413824025/posts/Nfw4aRmttEr). Thanks, Vlad!
 
