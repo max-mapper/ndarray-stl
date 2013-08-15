@@ -14,7 +14,7 @@ npm install ndarray-stl
 
 ## How it works
 
-This will work with any voxel data, but I built it to work with another app I made called [Voxel Builder](http://voxelbuilder.com). One of the users of DIY.org named burgzt made a [sweet mario](https://diy.org/burgzt/001em5) using it:
+This will work with any voxel data, but I built it to work with another app I made called [Voxel Builder](http://voxelbuilder.com). One of the users of DIY.org named burgzt took a [3D Mario](http://voxelsprite.0fps.net/?src=/uploads/50562d83243216d714000002.png) designed by Mikola Lysenko and [made a copy](https://diy.org/burgzt/001em5) in the builder app:
 
 ![mario](img/mario-builder.png)
 
@@ -26,7 +26,6 @@ For example, this image has encoded voxel data hidden inside:
 
 In the [ndarray-stl demo](http://maxogden.github.io/ndarray-stl/?png=http://i.imgur.com/ccBkMVY.png) I load the mario image (or any PNG url, you can specify one in the address bar), read the voxel data from the PNG and then generate an STL file from the voxels using ndarray-stl. You can also generate a smoothed voxel model. STL files can then be loaded into programs like MakerWare and 3D printed!
 
-
 ![mario-makerware](img/mario-makerware.png)
 
 The above shows three STL files loaded into MakerWare: unsmoothed, smoothed with [surface nets](http://www.merl.com/papers/docs/TR99-24.pdf) and smoothed with [marching cubes](https://en.wikipedia.org/wiki/Marching_cubes).
@@ -34,6 +33,12 @@ The above shows three STL files loaded into MakerWare: unsmoothed, smoothed with
 ![marios](img/marios-irl.png)
 
 Here are the 3 variations of Mario printed out by [@vladikoff](https://github.com/vladikoff) at the Mozilla San Francisco office. You can view more photos from his print [here](https://plus.google.com/106106671604413824025/posts/Nfw4aRmttEr). Thanks, Vlad!
+
+Mikola Lysenko, the original designer of the 3D mario, has a Shapeways store where you can order a [full color mario printed in sandstone](http://www.shapeways.com/model/702952/8-bit-voxel-sprite.html?materialId=26) and have it shipped to you.
+
+[![process](img/sprite-process.png)](http://0fps.wordpress.com/2012/09/18/turning-8-bit-sprites-into-printable-3d-models/)
+
+Mikola also wrote [a post](http://0fps.wordpress.com/2012/09/18/turning-8-bit-sprites-into-printable-3d-models/) about the process of creating the 3D mario based on 2D sprites.
 
 At this point in time there are over [400 creations](http://derekr.github.io/voxel-painter-admin/) that have been made with Voxel Builder. Any of them can be loaded into the ndarray-stl demo. Here are some good ones:
 
