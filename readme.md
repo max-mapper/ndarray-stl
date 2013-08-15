@@ -33,7 +33,7 @@ The above shows three STL files loaded into MakerWare: unsmoothed, smoothed with
 
 ![marios](img/marios-irl.png)
 
-Here are the 3 variations of Mario printed out by @vladikoff at the Mozilla San Francisco office. Thanks, Vlad!
+Here are the 3 variations of Mario printed out by @vladikoff at the Mozilla San Francisco office. You can view more photos from his print [here](https://plus.google.com/106106671604413824025/posts/XRf6xttuUFT). Thanks, Vlad!
 
 At this point in time there are over [400 creations](http://derekr.github.io/voxel-painter-admin/) that have been made with Voxel Builder. Any of them can be loaded into the ndarray-stl demo. Here are some good ones:
 
