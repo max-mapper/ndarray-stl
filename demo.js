@@ -88,7 +88,7 @@ function display(stl) {
 }
 
 function getProxyImage(imgURL, cb) {
-  var proxyURL = 'http://maxcors.jit.su/' + imgURL // until imgur gets CORS on GETs
+  var proxyURL = 'http://cors.maxogden.com/' + imgURL // until imgur gets CORS on GETs
   var img = new Image()
   img.crossOrigin = ''
   img.src = proxyURL

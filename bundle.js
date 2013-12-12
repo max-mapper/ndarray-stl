@@ -89,7 +89,7 @@ function display(stl) {
 }
 
 function getProxyImage(imgURL, cb) {
-  var proxyURL = 'http://maxcors.jit.su/' + imgURL // until imgur gets CORS on GETs
+  var proxyURL = 'http://cors.maxogden.com/' + imgURL // until imgur gets CORS on GETs
   var img = new Image()
   img.crossOrigin = ''
   img.src = proxyURL
@@ -97,7 +97,7 @@ function getProxyImage(imgURL, cb) {
     cb(img)
   }
 }
-},{"./":2,"ndarray":27,"ndarray-fill":18,"url":46,"voxel-critter":30}],2:[function(require,module,exports){
+},{"./":2,"ndarray":27,"ndarray-fill":18,"url":50,"voxel-critter":30}],2:[function(require,module,exports){
 var isosurface = require('isosurface')
 var aomesher = require('ao-mesher')
 var normals = require('normals')
@@ -1415,63 +1415,7 @@ function iota(n) {
 
 module.exports = iota
 },{}],10:[function(require,module,exports){
-"use strict"
-
-function unique_pred(list, compare) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b=list[0]
-  for(var i=1; i<len; ++i) {
-    b = a
-    a = list[i]
-    if(compare(a, b)) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique_eq(list) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b = list[0]
-  for(var i=1; i<len; ++i, b=a) {
-    b = a
-    a = list[i]
-    if(a !== b) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique(list, compare, sorted) {
-  if(list.length === 0) {
-    return []
-  }
-  if(compare) {
-    if(!sorted) {
-      list.sort(compare)
-    }
-    return unique_pred(list, compare)
-  }
-  if(!sorted) {
-    list.sort()
-  }
-  return unique_eq(list)
-}
-
-module.exports = unique
+module.exports=require(7)
 },{}],11:[function(require,module,exports){
 /**
  * Bit twiddling hacks for JavaScript.
@@ -1729,7 +1673,7 @@ function dupe(count, value) {
 
 module.exports = dupe
 },{}],13:[function(require,module,exports){
-(function(global){"use strict"
+var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};"use strict"
 
 var bits = require("bit-twiddle")
 var dup = require("dup")
@@ -2045,7 +1989,6 @@ exports.clearCache = function clearCache() {
   }
 }
 
-})(self)
 },{"bit-twiddle":11,"dup":12}],14:[function(require,module,exports){
 exports.surfaceNets         = require("./lib/surfacenets.js").surfaceNets;
 exports.marchingCubes       = require("./lib/marchingcubes.js").marchingCubes;
@@ -3235,112 +3178,9 @@ function generateCWiseOp(proc, typesig) {
 }
 module.exports = generateCWiseOp
 },{"uniq":23}],22:[function(require,module,exports){
-"use strict"
-
-var compile = require("./compile.js")
-
-function createThunk(proc) {
-  var code = ["'use strict'", "var CACHED={}"]
-  var vars = []
-  var thunkName = proc.funcName + "_cwise_thunk"
-  
-  //Build thunk
-  code.push(["return function ", thunkName, "(", proc.shimArgs.join(","), "){"].join(""))
-  var typesig = []
-  var string_typesig = []
-  var proc_args = [["array",proc.arrayArgs[0],".shape"].join("")]
-  for(var i=0; i<proc.arrayArgs.length; ++i) {
-    var j = proc.arrayArgs[i]
-    vars.push(["t", j, "=array", j, ".dtype,",
-               "r", j, "=array", j, ".order"].join(""))
-    typesig.push("t" + j)
-    typesig.push("r" + j)
-    string_typesig.push("t"+j)
-    string_typesig.push("r"+j+".join()")
-    proc_args.push("array" + j + ".data")
-    proc_args.push("array" + j + ".stride")
-    proc_args.push("array" + j + ".offset|0")
-  }
-  for(var i=0; i<proc.scalarArgs.length; ++i) {
-    proc_args.push("scalar" + proc.scalarArgs[i])
-  }
-  vars.push(["type=[", string_typesig.join(","), "].join()"].join(""))
-  vars.push("proc=CACHED[type]")
-  code.push("var " + vars.join(","))
-  
-  code.push(["if(!proc){",
-             "CACHED[type]=proc=compile([", typesig.join(","), "])}",
-             "return proc(", proc_args.join(","), ")}"].join(""))
-
-  if(proc.debug) {
-    console.log("Generated thunk:", code.join("\n"))
-  }
-  
-  //Compile thunk
-  var thunk = new Function("compile", code.join("\n"))
-  return thunk(compile.bind(undefined, proc))
-}
-
-module.exports = createThunk
-
+arguments[4][6][0].apply(exports,arguments)
 },{"./compile.js":21}],23:[function(require,module,exports){
-"use strict"
-
-function unique_pred(list, compare) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b=list[0]
-  for(var i=1; i<len; ++i) {
-    b = a
-    a = list[i]
-    if(compare(a, b)) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique_eq(list) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b = list[0]
-  for(var i=1; i<len; ++i, b=a) {
-    b = a
-    a = list[i]
-    if(a !== b) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique(list, compare, sorted) {
-  if(list.length === 0) {
-    return []
-  }
-  if(compare) {
-    if(!sorted) {
-      list.sort(compare)
-    }
-    return unique_pred(list, compare)
-  }
-  if(!sorted) {
-    list.sort()
-  }
-  return unique_eq(list)
-}
-
-module.exports = unique
+module.exports=require(7)
 },{}],24:[function(require,module,exports){
 "use strict"
 
@@ -3538,7 +3378,7 @@ function preprocess(func) {
 
 module.exports = preprocess
 },{"esprima":25,"uniq":26}],25:[function(require,module,exports){
-(function(){/*
+/*
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2012 Mathias Bynens <mathias@qiwi.be>
   Copyright (C) 2012 Joost-Wim Boekesteijn <joost-wim@boekesteijn.nl>
@@ -7447,65 +7287,8 @@ parseStatement: true, parseSourceElement: true */
 }));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
-})()
 },{}],26:[function(require,module,exports){
-"use strict"
-
-function unique_pred(list, compare) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b=list[0]
-  for(var i=1; i<len; ++i) {
-    b = a
-    a = list[i]
-    if(compare(a, b)) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique_eq(list) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b = list[0]
-  for(var i=1; i<len; ++i, b=a) {
-    b = a
-    a = list[i]
-    if(a !== b) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique(list, compare, sorted) {
-  if(list.length === 0) {
-    return []
-  }
-  if(compare) {
-    if(!sorted) {
-      list.sort(compare)
-    }
-    return unique_pred(list, compare)
-  }
-  if(!sorted) {
-    list.sort()
-  }
-  return unique_eq(list)
-}
-
-module.exports = unique
+module.exports=require(7)
 },{}],27:[function(require,module,exports){
 "use strict"
 
@@ -7847,17 +7630,7 @@ function wrappedNDArrayCtor(data, shape, stride, offset) {
 
 module.exports = wrappedNDArrayCtor
 },{"iota-array":28}],28:[function(require,module,exports){
-"use strict"
-
-function iota(n) {
-  var result = new Array(n)
-  for(var i=0; i<n; ++i) {
-    result[i] = i
-  }
-  return result
-}
-
-module.exports = iota
+module.exports=require(9)
 },{}],29:[function(require,module,exports){
 var EPSILON = 1e-6;
 
@@ -8095,7 +7868,9 @@ function convertToVoxels(hash) {
         if (current[1] > 0 && current[1] > bounds[1][1]) bounds[1][1] = current[1];
         if (current[2] < 0 && current[2] < bounds[0][2]) bounds[0][2] = current[2];
         if (current[2] > 0 && current[2] > bounds[1][2]) bounds[1][2] = current[2];
-        voxelData[current.slice(0, 3).join('|')] = current.slice(3)[0];
+        var key = current.slice(0, 3).join('|');
+        var val = current.slice(3)[0];
+        voxelData[key] = val;
       }
     }
   }
@@ -8263,7 +8038,7 @@ module.exports = {
 }
 
 },{}],33:[function(require,module,exports){
-(function(){var self = self || {};/**
+var self = self || {};/**
  * @author mrdoob / http://mrdoob.com/
  * @author Larry Battle / http://bateru.com/news
  * @author bhouston / http://exocortex.com
@@ -44834,7 +44609,6 @@ if (typeof exports !== 'undefined') {
   this['THREE'] = THREE;
 }
 
-})()
 },{}],34:[function(require,module,exports){
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
@@ -45817,38 +45591,9 @@ if(exports) {
 }
 
 },{}],43:[function(require,module,exports){
-module.exports = inherits
-
-function inherits (c, p, proto) {
-  proto = proto || {}
-  var e = {}
-  ;[c.prototype, proto].forEach(function (s) {
-    Object.getOwnPropertyNames(s).forEach(function (k) {
-      e[k] = Object.getOwnPropertyDescriptor(s, k)
-    })
-  })
-  c.prototype = Object.create(p.prototype, e)
-  c.super = p
-}
-
-//function Child () {
-//  Child.super.call(this)
-//  console.error([this
-//                ,this.constructor
-//                ,this.constructor === Child
-//                ,this.constructor.super === Parent
-//                ,Object.getPrototypeOf(this) === Child.prototype
-//                ,Object.getPrototypeOf(Object.getPrototypeOf(this))
-//                 === Parent.prototype
-//                ,this instanceof Child
-//                ,this instanceof Parent])
-//}
-//function Parent () {}
-//inherits(Child, Parent)
-//new Child
-
+module.exports=require(35)
 },{}],44:[function(require,module,exports){
-(function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
+var process=require("__browserify_process");if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
 var isArray = typeof Array.isArray === 'function'
@@ -45857,13 +45602,6 @@ var isArray = typeof Array.isArray === 'function'
         return Object.prototype.toString.call(xs) === '[object Array]'
     }
 ;
-function indexOf (xs, x) {
-    if (xs.indexOf) return xs.indexOf(x);
-    for (var i = 0; i < xs.length; i++) {
-        if (x === xs[i]) return i;
-    }
-    return -1;
-}
 
 // By default EventEmitters will print a warning if more than
 // 10 listeners are added to it. This is a useful default which
@@ -46000,7 +45738,7 @@ EventEmitter.prototype.removeListener = function(type, listener) {
   var list = this._events[type];
 
   if (isArray(list)) {
-    var i = indexOf(list, listener);
+    var i = list.indexOf(listener);
     if (i < 0) return this;
     list.splice(i, 1);
     if (list.length == 0)
@@ -46013,11 +45751,6 @@ EventEmitter.prototype.removeListener = function(type, listener) {
 };
 
 EventEmitter.prototype.removeAllListeners = function(type) {
-  if (arguments.length === 0) {
-    this._events = {};
-    return this;
-  }
-
   // does not use listeners(), so no side effect of creating _events[type]
   if (type && this._events && this._events[type]) this._events[type] = null;
   return this;
@@ -46032,360 +45765,798 @@ EventEmitter.prototype.listeners = function(type) {
   return this._events[type];
 };
 
-})(require("__browserify_process"))
-},{"__browserify_process":47}],45:[function(require,module,exports){
+},{"__browserify_process":45}],45:[function(require,module,exports){
+// shim for using process in browser
 
-/**
- * Object#toString() ref for stringify().
- */
+var process = module.exports = {};
 
-var toString = Object.prototype.toString;
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
 
-/**
- * Array#indexOf shim.
- */
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
 
-var indexOf = typeof Array.prototype.indexOf === 'function'
-  ? function(arr, el) { return arr.indexOf(el); }
-  : function(arr, el) {
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i] === el) return i;
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            if (ev.source === window && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],46:[function(require,module,exports){
+var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/*! http://mths.be/punycode v1.2.3 by @mathias */
+;(function(root) {
+
+	/** Detect free variables */
+	var freeExports = typeof exports == 'object' && exports;
+	var freeModule = typeof module == 'object' && module &&
+		module.exports == freeExports && module;
+	var freeGlobal = typeof global == 'object' && global;
+	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+		root = freeGlobal;
+	}
+
+	/**
+	 * The `punycode` object.
+	 * @name punycode
+	 * @type Object
+	 */
+	var punycode,
+
+	/** Highest positive signed 32-bit float value */
+	maxInt = 2147483647, // aka. 0x7FFFFFFF or 2^31-1
+
+	/** Bootstring parameters */
+	base = 36,
+	tMin = 1,
+	tMax = 26,
+	skew = 38,
+	damp = 700,
+	initialBias = 72,
+	initialN = 128, // 0x80
+	delimiter = '-', // '\x2D'
+
+	/** Regular expressions */
+	regexPunycode = /^xn--/,
+	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
+	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+
+	/** Error messages */
+	errors = {
+		'overflow': 'Overflow: input needs wider integers to process',
+		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+		'invalid-input': 'Invalid input'
+	},
+
+	/** Convenience shortcuts */
+	baseMinusTMin = base - tMin,
+	floor = Math.floor,
+	stringFromCharCode = String.fromCharCode,
+
+	/** Temporary variable */
+	key;
+
+	/*--------------------------------------------------------------------------*/
+
+	/**
+	 * A generic error utility function.
+	 * @private
+	 * @param {String} type The error type.
+	 * @returns {Error} Throws a `RangeError` with the applicable error message.
+	 */
+	function error(type) {
+		throw RangeError(errors[type]);
+	}
+
+	/**
+	 * A generic `Array#map` utility function.
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} callback The function that gets called for every array
+	 * item.
+	 * @returns {Array} A new array of values returned by the callback function.
+	 */
+	function map(array, fn) {
+		var length = array.length;
+		while (length--) {
+			array[length] = fn(array[length]);
+		}
+		return array;
+	}
+
+	/**
+	 * A simple `Array#map`-like wrapper to work with domain name strings.
+	 * @private
+	 * @param {String} domain The domain name.
+	 * @param {Function} callback The function that gets called for every
+	 * character.
+	 * @returns {Array} A new string of characters returned by the callback
+	 * function.
+	 */
+	function mapDomain(string, fn) {
+		return map(string.split(regexSeparators), fn).join('.');
+	}
+
+	/**
+	 * Creates an array containing the numeric code points of each Unicode
+	 * character in the string. While JavaScript uses UCS-2 internally,
+	 * this function will convert a pair of surrogate halves (each of which
+	 * UCS-2 exposes as separate characters) into a single code point,
+	 * matching UTF-16.
+	 * @see `punycode.ucs2.encode`
+	 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+	 * @memberOf punycode.ucs2
+	 * @name decode
+	 * @param {String} string The Unicode input string (UCS-2).
+	 * @returns {Array} The new array of code points.
+	 */
+	function ucs2decode(string) {
+		var output = [],
+		    counter = 0,
+		    length = string.length,
+		    value,
+		    extra;
+		while (counter < length) {
+			value = string.charCodeAt(counter++);
+			if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+				// high surrogate, and there is a next character
+				extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+					output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+				} else {
+					// unmatched surrogate; only append this code unit, in case the next
+					// code unit is the high surrogate of a surrogate pair
+					output.push(value);
+					counter--;
+				}
+			} else {
+				output.push(value);
+			}
+		}
+		return output;
+	}
+
+	/**
+	 * Creates a string based on an array of numeric code points.
+	 * @see `punycode.ucs2.decode`
+	 * @memberOf punycode.ucs2
+	 * @name encode
+	 * @param {Array} codePoints The array of numeric code points.
+	 * @returns {String} The new Unicode string (UCS-2).
+	 */
+	function ucs2encode(array) {
+		return map(array, function(value) {
+			var output = '';
+			if (value > 0xFFFF) {
+				value -= 0x10000;
+				output += stringFromCharCode(value >>> 10 & 0x3FF | 0xD800);
+				value = 0xDC00 | value & 0x3FF;
+			}
+			output += stringFromCharCode(value);
+			return output;
+		}).join('');
+	}
+
+	/**
+	 * Converts a basic code point into a digit/integer.
+	 * @see `digitToBasic()`
+	 * @private
+	 * @param {Number} codePoint The basic numeric code point value.
+	 * @returns {Number} The numeric value of a basic code point (for use in
+	 * representing integers) in the range `0` to `base - 1`, or `base` if
+	 * the code point does not represent a value.
+	 */
+	function basicToDigit(codePoint) {
+		if (codePoint - 48 < 10) {
+			return codePoint - 22;
+		}
+		if (codePoint - 65 < 26) {
+			return codePoint - 65;
+		}
+		if (codePoint - 97 < 26) {
+			return codePoint - 97;
+		}
+		return base;
+	}
+
+	/**
+	 * Converts a digit/integer into a basic code point.
+	 * @see `basicToDigit()`
+	 * @private
+	 * @param {Number} digit The numeric value of a basic code point.
+	 * @returns {Number} The basic code point whose value (when used for
+	 * representing integers) is `digit`, which needs to be in the range
+	 * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+	 * used; else, the lowercase form is used. The behavior is undefined
+	 * if `flag` is non-zero and `digit` has no uppercase form.
+	 */
+	function digitToBasic(digit, flag) {
+		//  0..25 map to ASCII a..z or A..Z
+		// 26..35 map to ASCII 0..9
+		return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+	}
+
+	/**
+	 * Bias adaptation function as per section 3.4 of RFC 3492.
+	 * http://tools.ietf.org/html/rfc3492#section-3.4
+	 * @private
+	 */
+	function adapt(delta, numPoints, firstTime) {
+		var k = 0;
+		delta = firstTime ? floor(delta / damp) : delta >> 1;
+		delta += floor(delta / numPoints);
+		for (/* no initialization */; delta > baseMinusTMin * tMax >> 1; k += base) {
+			delta = floor(delta / baseMinusTMin);
+		}
+		return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+	}
+
+	/**
+	 * Converts a Punycode string of ASCII-only symbols to a string of Unicode
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The Punycode string of ASCII-only symbols.
+	 * @returns {String} The resulting string of Unicode symbols.
+	 */
+	function decode(input) {
+		// Don't use UCS-2
+		var output = [],
+		    inputLength = input.length,
+		    out,
+		    i = 0,
+		    n = initialN,
+		    bias = initialBias,
+		    basic,
+		    j,
+		    index,
+		    oldi,
+		    w,
+		    k,
+		    digit,
+		    t,
+		    length,
+		    /** Cached calculation results */
+		    baseMinusT;
+
+		// Handle the basic code points: let `basic` be the number of input code
+		// points before the last delimiter, or `0` if there is none, then copy
+		// the first basic code points to the output.
+
+		basic = input.lastIndexOf(delimiter);
+		if (basic < 0) {
+			basic = 0;
+		}
+
+		for (j = 0; j < basic; ++j) {
+			// if it's not a basic code point
+			if (input.charCodeAt(j) >= 0x80) {
+				error('not-basic');
+			}
+			output.push(input.charCodeAt(j));
+		}
+
+		// Main decoding loop: start just after the last delimiter if any basic code
+		// points were copied; start at the beginning otherwise.
+
+		for (index = basic > 0 ? basic + 1 : 0; index < inputLength; /* no final expression */) {
+
+			// `index` is the index of the next character to be consumed.
+			// Decode a generalized variable-length integer into `delta`,
+			// which gets added to `i`. The overflow checking is easier
+			// if we increase `i` as we go, then subtract off its starting
+			// value at the end to obtain `delta`.
+			for (oldi = i, w = 1, k = base; /* no condition */; k += base) {
+
+				if (index >= inputLength) {
+					error('invalid-input');
+				}
+
+				digit = basicToDigit(input.charCodeAt(index++));
+
+				if (digit >= base || digit > floor((maxInt - i) / w)) {
+					error('overflow');
+				}
+
+				i += digit * w;
+				t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+
+				if (digit < t) {
+					break;
+				}
+
+				baseMinusT = base - t;
+				if (w > floor(maxInt / baseMinusT)) {
+					error('overflow');
+				}
+
+				w *= baseMinusT;
+
+			}
+
+			out = output.length + 1;
+			bias = adapt(i - oldi, out, oldi == 0);
+
+			// `i` was supposed to wrap around from `out` to `0`,
+			// incrementing `n` each time, so we'll fix that now:
+			if (floor(i / out) > maxInt - n) {
+				error('overflow');
+			}
+
+			n += floor(i / out);
+			i %= out;
+
+			// Insert `n` at position `i` of the output
+			output.splice(i++, 0, n);
+
+		}
+
+		return ucs2encode(output);
+	}
+
+	/**
+	 * Converts a string of Unicode symbols to a Punycode string of ASCII-only
+	 * symbols.
+	 * @memberOf punycode
+	 * @param {String} input The string of Unicode symbols.
+	 * @returns {String} The resulting Punycode string of ASCII-only symbols.
+	 */
+	function encode(input) {
+		var n,
+		    delta,
+		    handledCPCount,
+		    basicLength,
+		    bias,
+		    j,
+		    m,
+		    q,
+		    k,
+		    t,
+		    currentValue,
+		    output = [],
+		    /** `inputLength` will hold the number of code points in `input`. */
+		    inputLength,
+		    /** Cached calculation results */
+		    handledCPCountPlusOne,
+		    baseMinusT,
+		    qMinusT;
+
+		// Convert the input in UCS-2 to Unicode
+		input = ucs2decode(input);
+
+		// Cache the length
+		inputLength = input.length;
+
+		// Initialize the state
+		n = initialN;
+		delta = 0;
+		bias = initialBias;
+
+		// Handle the basic code points
+		for (j = 0; j < inputLength; ++j) {
+			currentValue = input[j];
+			if (currentValue < 0x80) {
+				output.push(stringFromCharCode(currentValue));
+			}
+		}
+
+		handledCPCount = basicLength = output.length;
+
+		// `handledCPCount` is the number of code points that have been handled;
+		// `basicLength` is the number of basic code points.
+
+		// Finish the basic string - if it is not empty - with a delimiter
+		if (basicLength) {
+			output.push(delimiter);
+		}
+
+		// Main encoding loop:
+		while (handledCPCount < inputLength) {
+
+			// All non-basic code points < n have been handled already. Find the next
+			// larger one:
+			for (m = maxInt, j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+				if (currentValue >= n && currentValue < m) {
+					m = currentValue;
+				}
+			}
+
+			// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+			// but guard against overflow
+			handledCPCountPlusOne = handledCPCount + 1;
+			if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
+				error('overflow');
+			}
+
+			delta += (m - n) * handledCPCountPlusOne;
+			n = m;
+
+			for (j = 0; j < inputLength; ++j) {
+				currentValue = input[j];
+
+				if (currentValue < n && ++delta > maxInt) {
+					error('overflow');
+				}
+
+				if (currentValue == n) {
+					// Represent delta as a generalized variable-length integer
+					for (q = delta, k = base; /* no condition */; k += base) {
+						t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+						if (q < t) {
+							break;
+						}
+						qMinusT = q - t;
+						baseMinusT = base - t;
+						output.push(
+							stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+						);
+						q = floor(qMinusT / baseMinusT);
+					}
+
+					output.push(stringFromCharCode(digitToBasic(q, 0)));
+					bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+					delta = 0;
+					++handledCPCount;
+				}
+			}
+
+			++delta;
+			++n;
+
+		}
+		return output.join('');
+	}
+
+	/**
+	 * Converts a Punycode string representing a domain name to Unicode. Only the
+	 * Punycoded parts of the domain name will be converted, i.e. it doesn't
+	 * matter if you call it on a string that has already been converted to
+	 * Unicode.
+	 * @memberOf punycode
+	 * @param {String} domain The Punycode domain name to convert to Unicode.
+	 * @returns {String} The Unicode representation of the given Punycode
+	 * string.
+	 */
+	function toUnicode(domain) {
+		return mapDomain(domain, function(string) {
+			return regexPunycode.test(string)
+				? decode(string.slice(4).toLowerCase())
+				: string;
+		});
+	}
+
+	/**
+	 * Converts a Unicode string representing a domain name to Punycode. Only the
+	 * non-ASCII parts of the domain name will be converted, i.e. it doesn't
+	 * matter if you call it with a domain that's already in ASCII.
+	 * @memberOf punycode
+	 * @param {String} domain The domain name to convert, as a Unicode string.
+	 * @returns {String} The Punycode representation of the given domain name.
+	 */
+	function toASCII(domain) {
+		return mapDomain(domain, function(string) {
+			return regexNonASCII.test(string)
+				? 'xn--' + encode(string)
+				: string;
+		});
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	/** Define the public API */
+	punycode = {
+		/**
+		 * A string representing the current Punycode.js version number.
+		 * @memberOf punycode
+		 * @type String
+		 */
+		'version': '1.2.3',
+		/**
+		 * An object of methods to convert from JavaScript's internal character
+		 * representation (UCS-2) to Unicode code points, and back.
+		 * @see <http://mathiasbynens.be/notes/javascript-encoding>
+		 * @memberOf punycode
+		 * @type Object
+		 */
+		'ucs2': {
+			'decode': ucs2decode,
+			'encode': ucs2encode
+		},
+		'decode': decode,
+		'encode': encode,
+		'toASCII': toASCII,
+		'toUnicode': toUnicode
+	};
+
+	/** Expose `punycode` */
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		typeof define == 'function' &&
+		typeof define.amd == 'object' &&
+		define.amd
+	) {
+		define(function() {
+			return punycode;
+		});
+	}	else if (freeExports && !freeExports.nodeType) {
+		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+			freeModule.exports = punycode;
+		} else { // in Narwhal or RingoJS v0.7.0-
+			for (key in punycode) {
+				punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
+			}
+		}
+	} else { // in Rhino or a web browser
+		root.punycode = punycode;
+	}
+
+}(this));
+
+},{}],47:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+module.exports = function(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
+  }
+
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (isArray(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+},{}],48:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+var stringifyPrimitive = function(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+};
+
+module.exports = function(obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
+  }
+
+  if (typeof obj === 'object') {
+    return map(objectKeys(obj), function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (isArray(obj[k])) {
+        return obj[k].map(function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
+      } else {
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
       }
-      return -1;
-    };
+    }).join(sep);
 
-/**
- * Array.isArray shim.
- */
+  }
 
-var isArray = Array.isArray || function(arr) {
-  return toString.call(arr) == '[object Array]';
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
 };
 
-/**
- * Object.keys shim.
- */
-
-var objectKeys = Object.keys || function(obj) {
-  var ret = [];
-  for (var key in obj) ret.push(key);
-  return ret;
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-/**
- * Array#forEach shim.
- */
+function map (xs, f) {
+  if (xs.map) return xs.map(f);
+  var res = [];
+  for (var i = 0; i < xs.length; i++) {
+    res.push(f(xs[i], i));
+  }
+  return res;
+}
 
-var forEach = typeof Array.prototype.forEach === 'function'
-  ? function(arr, fn) { return arr.forEach(fn); }
-  : function(arr, fn) {
-      for (var i = 0; i < arr.length; i++) fn(arr[i]);
-    };
-
-/**
- * Array#reduce shim.
- */
-
-var reduce = function(arr, fn, initial) {
-  if (typeof arr.reduce === 'function') return arr.reduce(fn, initial);
-  var res = initial;
-  for (var i = 0; i < arr.length; i++) res = fn(res, arr[i]);
+var objectKeys = Object.keys || function (obj) {
+  var res = [];
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
+  }
   return res;
 };
 
-/**
- * Cache non-integer test regexp.
- */
+},{}],49:[function(require,module,exports){
+'use strict';
 
-var isint = /^[0-9]+$/;
+exports.decode = exports.parse = require('./decode');
+exports.encode = exports.stringify = require('./encode');
 
-function promote(parent, key) {
-  if (parent[key].length == 0) return parent[key] = {};
-  var t = {};
-  for (var i in parent[key]) t[i] = parent[key][i];
-  parent[key] = t;
-  return t;
-}
+},{"./decode":47,"./encode":48}],50:[function(require,module,exports){
+/*jshint strict:true node:true es5:true onevar:true laxcomma:true laxbreak:true eqeqeq:true immed:true latedef:true*/
+(function () {
+  "use strict";
 
-function parse(parts, parent, key, val) {
-  var part = parts.shift();
-  // end
-  if (!part) {
-    if (isArray(parent[key])) {
-      parent[key].push(val);
-    } else if ('object' == typeof parent[key]) {
-      parent[key] = val;
-    } else if ('undefined' == typeof parent[key]) {
-      parent[key] = val;
-    } else {
-      parent[key] = [parent[key], val];
-    }
-    // array
-  } else {
-    var obj = parent[key] = parent[key] || [];
-    if (']' == part) {
-      if (isArray(obj)) {
-        if ('' != val) obj.push(val);
-      } else if ('object' == typeof obj) {
-        obj[objectKeys(obj).length] = val;
-      } else {
-        obj = parent[key] = [parent[key], val];
-      }
-      // prop
-    } else if (~indexOf(part, ']')) {
-      part = part.substr(0, part.length - 1);
-      if (!isint.test(part) && isArray(obj)) obj = promote(parent, key);
-      parse(parts, obj, part, val);
-      // key
-    } else {
-      if (!isint.test(part) && isArray(obj)) obj = promote(parent, key);
-      parse(parts, obj, part, val);
-    }
-  }
-}
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-/**
- * Merge parent key/val pair.
- */
-
-function merge(parent, key, val){
-  if (~indexOf(key, ']')) {
-    var parts = key.split('[')
-      , len = parts.length
-      , last = len - 1;
-    parse(parts, parent, 'base', val);
-    // optimize
-  } else {
-    if (!isint.test(key) && isArray(parent.base)) {
-      var t = {};
-      for (var k in parent.base) t[k] = parent.base[k];
-      parent.base = t;
-    }
-    set(parent.base, key, val);
-  }
-
-  return parent;
-}
-
-/**
- * Parse the given obj.
- */
-
-function parseObject(obj){
-  var ret = { base: {} };
-  forEach(objectKeys(obj), function(name){
-    merge(ret, name, obj[name]);
-  });
-  return ret.base;
-}
-
-/**
- * Parse the given str.
- */
-
-function parseString(str){
-  return reduce(String(str).split('&'), function(ret, pair){
-    var eql = indexOf(pair, '=')
-      , brace = lastBraceInKey(pair)
-      , key = pair.substr(0, brace || eql)
-      , val = pair.substr(brace || eql, pair.length)
-      , val = val.substr(indexOf(val, '=') + 1, val.length);
-
-    // ?foo
-    if ('' == key) key = pair, val = '';
-    if ('' == key) return ret;
-
-    return merge(ret, decode(key), decode(val));
-  }, { base: {} }).base;
-}
-
-/**
- * Parse the given query `str` or `obj`, returning an object.
- *
- * @param {String} str | {Object} obj
- * @return {Object}
- * @api public
- */
-
-exports.parse = function(str){
-  if (null == str || '' == str) return {};
-  return 'object' == typeof str
-    ? parseObject(str)
-    : parseString(str);
-};
-
-/**
- * Turn the given `obj` into a query string
- *
- * @param {Object} obj
- * @return {String}
- * @api public
- */
-
-var stringify = exports.stringify = function(obj, prefix) {
-  if (isArray(obj)) {
-    return stringifyArray(obj, prefix);
-  } else if ('[object Object]' == toString.call(obj)) {
-    return stringifyObject(obj, prefix);
-  } else if ('string' == typeof obj) {
-    return stringifyString(obj, prefix);
-  } else {
-    return prefix + '=' + encodeURIComponent(String(obj));
-  }
-};
-
-/**
- * Stringify the given `str`.
- *
- * @param {String} str
- * @param {String} prefix
- * @return {String}
- * @api private
- */
-
-function stringifyString(str, prefix) {
-  if (!prefix) throw new TypeError('stringify expects an object');
-  return prefix + '=' + encodeURIComponent(str);
-}
-
-/**
- * Stringify the given `arr`.
- *
- * @param {Array} arr
- * @param {String} prefix
- * @return {String}
- * @api private
- */
-
-function stringifyArray(arr, prefix) {
-  var ret = [];
-  if (!prefix) throw new TypeError('stringify expects an object');
-  for (var i = 0; i < arr.length; i++) {
-    ret.push(stringify(arr[i], prefix + '[' + i + ']'));
-  }
-  return ret.join('&');
-}
-
-/**
- * Stringify the given `obj`.
- *
- * @param {Object} obj
- * @param {String} prefix
- * @return {String}
- * @api private
- */
-
-function stringifyObject(obj, prefix) {
-  var ret = []
-    , keys = objectKeys(obj)
-    , key;
-
-  for (var i = 0, len = keys.length; i < len; ++i) {
-    key = keys[i];
-    if (null == obj[key]) {
-      ret.push(encodeURIComponent(key) + '=');
-    } else {
-      ret.push(stringify(obj[key], prefix
-        ? prefix + '[' + encodeURIComponent(key) + ']'
-        : encodeURIComponent(key)));
-    }
-  }
-
-  return ret.join('&');
-}
-
-/**
- * Set `obj`'s `key` to `val` respecting
- * the weird and wonderful syntax of a qs,
- * where "foo=bar&foo=baz" becomes an array.
- *
- * @param {Object} obj
- * @param {String} key
- * @param {String} val
- * @api private
- */
-
-function set(obj, key, val) {
-  var v = obj[key];
-  if (undefined === v) {
-    obj[key] = val;
-  } else if (isArray(v)) {
-    v.push(val);
-  } else {
-    obj[key] = [v, val];
-  }
-}
-
-/**
- * Locate last brace in `str` within the key.
- *
- * @param {String} str
- * @return {Number}
- * @api private
- */
-
-function lastBraceInKey(str) {
-  var len = str.length
-    , brace
-    , c;
-  for (var i = 0; i < len; ++i) {
-    c = str[i];
-    if (']' == c) brace = false;
-    if ('[' == c) brace = true;
-    if ('=' == c && !brace) return i;
-  }
-}
-
-/**
- * Decode `str`.
- *
- * @param {String} str
- * @return {String}
- * @api private
- */
-
-function decode(str) {
-  try {
-    return decodeURIComponent(str.replace(/\+/g, ' '));
-  } catch (err) {
-    return str;
-  }
-}
-
-},{}],46:[function(require,module,exports){
-var punycode = { encode : function (s) { return s } };
+var punycode = require('punycode');
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
 exports.resolveObject = urlResolveObject;
 exports.format = urlFormat;
 
-function arrayIndexOf(array, subject) {
-    for (var i = 0, j = array.length; i < j; i++) {
-        if(array[i] == subject) return i;
-    }
-    return -1;
-}
-
-var objectKeys = Object.keys || function objectKeys(object) {
-    if (object !== Object(object)) throw new TypeError('Invalid object');
-    var keys = [];
-    for (var key in object) if (object.hasOwnProperty(key)) keys[keys.length] = key;
-    return keys;
-}
-
 // Reference: RFC 3986, RFC 1808, RFC 2396
 
 // define these here so at least they only have to be
 // compiled once on the first module load.
 var protocolPattern = /^([a-z0-9.+-]+:)/i,
-    portPattern = /:[0-9]+$/,
+    portPattern = /:[0-9]*$/,
+
     // RFC 2396: characters reserved for delimiting URLs.
+    // We actually just auto-escape these.
     delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
     // RFC 2396: characters not allowed for various reasons.
-    unwise = ['{', '}', '|', '\\', '^', '~', '[', ']', '`'].concat(delims),
+    unwise = ['{', '}', '|', '\\', '^', '~', '`'].concat(delims),
+
     // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
-    autoEscape = ['\''],
+    autoEscape = ['\''].concat(delims),
     // Characters that are never ever allowed in a hostname.
     // Note that any invalid chars are also handled, but these
     // are the ones that are *expected* to be seen, so we fast-path
@@ -46443,13 +46614,9 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
   var out = {},
       rest = url;
 
-  // cut off any delimiters.
-  // This is to support parse stuff like "<http://foo.com>"
-  for (var i = 0, l = rest.length; i < l; i++) {
-    if (arrayIndexOf(delims, rest.charAt(i)) === -1) break;
-  }
-  if (i !== 0) rest = rest.substr(i);
-
+  // trim before proceeding.
+  // This is to support parse stuff like "  http://foo.com  \n"
+  rest = rest.trim();
 
   var proto = protocolPattern.exec(rest);
   if (proto) {
@@ -46481,28 +46648,30 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
     // to the left of the first @ sign, unless some non-auth character
     // comes *before* the @-sign.
     // URLs are obnoxious.
-    var atSign = arrayIndexOf(rest, '@');
+    var atSign = rest.indexOf('@');
     if (atSign !== -1) {
+      var auth = rest.slice(0, atSign);
+
       // there *may be* an auth
       var hasAuth = true;
       for (var i = 0, l = nonAuthChars.length; i < l; i++) {
-        var index = arrayIndexOf(rest, nonAuthChars[i]);
-        if (index !== -1 && index < atSign) {
+        if (auth.indexOf(nonAuthChars[i]) !== -1) {
           // not a valid auth.  Something like http://foo.com/bar@baz/
           hasAuth = false;
           break;
         }
       }
+
       if (hasAuth) {
         // pluck off the auth portion.
-        out.auth = rest.substr(0, atSign);
+        out.auth = decodeURIComponent(auth);
         rest = rest.substr(atSign + 1);
       }
     }
 
     var firstNonHost = -1;
     for (var i = 0, l = nonHostChars.length; i < l; i++) {
-      var index = arrayIndexOf(rest, nonHostChars[i]);
+      var index = rest.indexOf(nonHostChars[i]);
       if (index !== -1 &&
           (firstNonHost < 0 || index < firstNonHost)) firstNonHost = index;
     }
@@ -46517,7 +46686,7 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
 
     // pull out port.
     var p = parseHost(out.host);
-    var keys = objectKeys(p);
+    var keys = Object.keys(p);
     for (var i = 0, l = keys.length; i < l; i++) {
       var key = keys[i];
       out[key] = p[key];
@@ -46527,10 +46696,15 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
     // so even if it's empty, it has to be present.
     out.hostname = out.hostname || '';
 
+    // if hostname begins with [ and ends with ]
+    // assume that it's an IPv6 address.
+    var ipv6Hostname = out.hostname[0] === '[' &&
+        out.hostname[out.hostname.length - 1] === ']';
+
     // validate a little.
     if (out.hostname.length > hostnameMaxLen) {
       out.hostname = '';
-    } else {
+    } else if (!ipv6Hostname) {
       var hostparts = out.hostname.split(/\./);
       for (var i = 0, l = hostparts.length; i < l; i++) {
         var part = hostparts[i];
@@ -46569,22 +46743,32 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
     // hostnames are always lower case.
     out.hostname = out.hostname.toLowerCase();
 
-    // IDNA Support: Returns a puny coded representation of "domain".
-    // It only converts the part of the domain name that
-    // has non ASCII characters. I.e. it dosent matter if
-    // you call it with a domain that already is in ASCII.
-    var domainArray = out.hostname.split('.');
-    var newOut = [];
-    for (var i = 0; i < domainArray.length; ++i) {
-      var s = domainArray[i];
-      newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
-          'xn--' + punycode.encode(s) : s);
+    if (!ipv6Hostname) {
+      // IDNA Support: Returns a puny coded representation of "domain".
+      // It only converts the part of the domain name that
+      // has non ASCII characters. I.e. it dosent matter if
+      // you call it with a domain that already is in ASCII.
+      var domainArray = out.hostname.split('.');
+      var newOut = [];
+      for (var i = 0; i < domainArray.length; ++i) {
+        var s = domainArray[i];
+        newOut.push(s.match(/[^A-Za-z0-9_-]/) ?
+            'xn--' + punycode.encode(s) : s);
+      }
+      out.hostname = newOut.join('.');
     }
-    out.hostname = newOut.join('.');
 
     out.host = (out.hostname || '') +
         ((out.port) ? ':' + out.port : '');
     out.href += out.host;
+
+    // strip [ and ] from the hostname
+    if (ipv6Hostname) {
+      out.hostname = out.hostname.substr(1, out.hostname.length - 2);
+      if (rest[0] !== '/') {
+        rest = '/' + rest;
+      }
+    }
   }
 
   // now rest is set to the post-host stuff.
@@ -46602,27 +46786,17 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
       }
       rest = rest.split(ae).join(esc);
     }
-
-    // Now make sure that delims never appear in a url.
-    var chop = rest.length;
-    for (var i = 0, l = delims.length; i < l; i++) {
-      var c = arrayIndexOf(rest, delims[i]);
-      if (c !== -1) {
-        chop = Math.min(c, chop);
-      }
-    }
-    rest = rest.substr(0, chop);
   }
 
 
   // chop off from the tail first.
-  var hash = arrayIndexOf(rest, '#');
+  var hash = rest.indexOf('#');
   if (hash !== -1) {
     // got a fragment string.
     out.hash = rest.substr(hash);
     rest = rest.slice(0, hash);
   }
-  var qm = arrayIndexOf(rest, '?');
+  var qm = rest.indexOf('?');
   if (qm !== -1) {
     out.search = rest.substr(qm);
     out.query = rest.substr(qm + 1);
@@ -46662,29 +46836,34 @@ function urlFormat(obj) {
 
   var auth = obj.auth || '';
   if (auth) {
-    auth = auth.split('@').join('%40');
-    for (var i = 0, l = nonAuthChars.length; i < l; i++) {
-      var nAC = nonAuthChars[i];
-      auth = auth.split(nAC).join(encodeURIComponent(nAC));
-    }
+    auth = encodeURIComponent(auth);
+    auth = auth.replace(/%3A/i, ':');
     auth += '@';
   }
 
   var protocol = obj.protocol || '',
-      host = (obj.host !== undefined) ? auth + obj.host :
-          obj.hostname !== undefined ? (
-              auth + obj.hostname +
-              (obj.port ? ':' + obj.port : '')
-          ) :
-          false,
       pathname = obj.pathname || '',
-      query = obj.query &&
-              ((typeof obj.query === 'object' &&
-                objectKeys(obj.query).length) ?
-                 querystring.stringify(obj.query) :
-                 '') || '',
-      search = obj.search || (query && ('?' + query)) || '',
-      hash = obj.hash || '';
+      hash = obj.hash || '',
+      host = false,
+      query = '';
+
+  if (obj.host !== undefined) {
+    host = auth + obj.host;
+  } else if (obj.hostname !== undefined) {
+    host = auth + (obj.hostname.indexOf(':') === -1 ?
+        obj.hostname :
+        '[' + obj.hostname + ']');
+    if (obj.port) {
+      host += ':' + obj.port;
+    }
+  }
+
+  if (obj.query && typeof obj.query === 'object' &&
+      Object.keys(obj.query).length) {
+    query = querystring.stringify(obj.query);
+  }
+
+  var search = obj.search || (query && ('?' + query)) || '';
 
   if (protocol && protocol.substr(-1) !== ':') protocol += ':';
 
@@ -46840,7 +47019,7 @@ function urlResolveObject(source, relative) {
       //occationaly the auth can get stuck only in host
       //this especialy happens in cases like
       //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-      var authInHost = source.host && arrayIndexOf(source.host, '@') > 0 ?
+      var authInHost = source.host && source.host.indexOf('@') > 0 ?
                        source.host.split('@') : false;
       if (authInHost) {
         source.auth = authInHost.shift();
@@ -46920,7 +47099,7 @@ function urlResolveObject(source, relative) {
     //occationaly the auth can get stuck only in host
     //this especialy happens in cases like
     //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
-    var authInHost = source.host && arrayIndexOf(source.host, '@') > 0 ?
+    var authInHost = source.host && source.host.indexOf('@') > 0 ?
                      source.host.split('@') : false;
     if (authInHost) {
       source.auth = authInHost.shift();
@@ -46951,66 +47130,16 @@ function parseHost(host) {
   var port = portPattern.exec(host);
   if (port) {
     port = port[0];
-    out.port = port.substr(1);
+    if (port !== ':') {
+      out.port = port.substr(1);
+    }
     host = host.substr(0, host.length - port.length);
   }
   if (host) out.hostname = host;
   return out;
 }
 
-},{"querystring":45}],47:[function(require,module,exports){
-// shim for using process in browser
+}());
 
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}]},{},[1])
+},{"punycode":46,"querystring":49}]},{},[1])
 ;
